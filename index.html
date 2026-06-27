@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fibra Sports</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --laranja: #e8650a; --laranja-claro: #ff8c2a; --preto: #0a0a0a; --branco: #ffffff; }
+    body { background-color: var(--preto); color: var(--branco); font-family: 'Montserrat', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+    .bg-glow { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 20% 50%, rgba(232,101,10,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 20%, rgba(232,101,10,0.08) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+    .particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; }
+    .particle { position: absolute; width: 2px; height: 2px; background: var(--laranja); border-radius: 50%; animation: float-up linear infinite; opacity: 0; }
+    @keyframes float-up { 0% { transform: translateY(100vh); opacity: 0; } 10% { opacity: 0.6; } 90% { opacity: 0.3; } 100% { transform: translateY(-10vh) translateX(30px); opacity: 0; } }
+    .container { position: relative; z-index: 1; width: 100%; max-width: 700px; padding: 40px 20px 120px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .logo-wrapper { margin-bottom: 20px; animation: fadeDown 0.8s ease both; }
+    .logo-icon { width: 80px; height: 80px; background: linear-gradient(145deg, #1a1a1a, #0a0a0a); border: 2px solid var(--laranja); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; animation: pulse-border 2s ease-in-out infinite; }
+    @keyframes pulse-border { 0%, 100% { box-shadow: 0 0 20px rgba(232,101,10,0.4); } 50% { box-shadow: 0 0 35px rgba(232,101,10,0.7); } }
+    .logo-icon svg { width: 48px; height: 48px; }
+    .logo-text { display: flex; flex-direction: column; align-items: center; line-height: 1; }
+    .logo-text .fibra { font-family: 'Oswald', sans-serif; font-size: 3.2rem; font-weight: 700; color: var(--branco); letter-spacing: 4px; text-shadow: 0 0 30px rgba(232,101,10,0.3); }
+    .logo-text .sports { font-size: 0.85rem; font-weight: 600; color: var(--branco); letter-spacing: 8px; opacity: 0.85; }
+    .slogan { margin: 30px 0 10px; animation: fadeDown 0.9s ease 0.2s both; }
+    .slogan p { font-size: 1.15rem; font-weight: 600; color: var(--branco); text-transform: uppercase; letter-spacing: 1px; line-height: 1.4; }
+    .slogan .destaque { font-size: 1.45rem; font-weight: 900; font-style: italic; color: var(--laranja); text-transform: uppercase; display: block; animation: glow-text 2.5s ease-in-out infinite; }
+    @keyframes glow-text { 0%, 100% { text-shadow: 0 0 20px rgba(232,101,10,0.5); } 50% { text-shadow: 0 0 40px rgba(232,101,10,0.9), 0 0 60px rgba(232,101,10,0.4); } }
+    .divider { width: 60px; height: 2px; background: linear-gradient(90deg, transparent, var(--laranja), transparent); margin: 24px auto; }
+    .card { background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)); border: 1px solid rgba(232,101,10,0.2); border-radius: 20px; padding: 36px 32px; margin-bottom: 10px; backdrop-filter: blur(10px); animation: fadeUp 1s ease 0.4s both; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+    .card p { font-size: 0.92rem; line-height: 1.85; color: rgba(255,255,255,0.78); margin-bottom: 14px; }
+    .card p:last-child { margin-bottom: 0; }
+    .card .highlight { color: var(--laranja); font-weight: 700; }
+    .buttons-section { margin-top: 36px; display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 400px; animation: fadeUp 1s ease 0.6s both; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 16px 28px; border-radius: 12px; border: 2px solid var(--laranja); background: linear-gradient(135deg, rgba(232,101,10,0.08), rgba(232,101,10,0.02)); color: var(--branco); font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 700; text-decoration: none; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+    .btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent); transition: left 0.5s ease; }
+    .btn:hover::before { left: 100%; }
+    .btn:hover { background: linear-gradient(135deg, rgba(232,101,10,0.25), rgba(232,101,10,0.1)); box-shadow: 0 0 25px rgba(232,101,10,0.4), 0 4px 20px rgba(0,0,0,0.3); transform: translateY(-2px) scale(1.02); border-color: var(--laranja-claro); }
+    .btn:active { transform: translateY(0) scale(0.98); }
+    .btn-primary { background: linear-gradient(135deg, rgba(232,101,10,0.2), rgba(232,101,10,0.05)); animation: pulse-btn 3s ease-in-out infinite; }
+    @keyframes pulse-btn { 0%, 100% { box-shadow: 0 0 0px rgba(232,101,10,0); } 50% { box-shadow: 0 0 20px rgba(232,101,10,0.3); } }
+    .btn-primary:hover { animation: none; box-shadow: 0 0 30px rgba(232,101,10,0.6); }
+    .btn .icon { font-size: 1.3rem; flex-shrink: 0; }
+    .footer-section { margin-top: 50px; animation: fadeUp 1s ease 0.8s both; text-align: center; }
+    .nova-plataforma { font-size: 0.72rem; letter-spacing: 5px; color: var(--laranja); text-transform: uppercase; font-weight: 600; margin-bottom: 16px; opacity: 0.8; }
+    .brand-footer .name { font-family: 'Oswald', sans-serif; font-size: 1.4rem; letter-spacing: 4px; color: var(--laranja); font-weight: 700; }
+    .brand-footer .tagline { font-size: 1rem; font-weight: 700; color: var(--branco); letter-spacing: 2px; margin-top: 4px; }
+    .brand-footer .sub { font-size: 0.78rem; color: rgba(255,255,255,0.4); margin-top: 8px; letter-spacing: 1px; }
+    .whatsapp-float { position: fixed; bottom: 28px; right: 28px; z-index: 999; width: 60px; height: 60px; background: #25D366; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; box-shadow: 0 4px 20px rgba(37,211,102,0.5); animation: bounce-wp 2.5s ease-in-out infinite; transition: transform 0.2s ease; }
+    .whatsapp-float:hover { transform: scale(1.12); box-shadow: 0 6px 30px rgba(37,211,102,0.7); animation: none; }
+    @keyframes bounce-wp { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .whatsapp-float svg { width: 32px; height: 32px; }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 480px) { .logo-text .fibra { font-size: 2.4rem; } .slogan .destaque { font-size: 1.2rem; } .card { padding: 24px 20px; } .btn { padding: 14px 20px; font-size: 0.85rem; } }
+  </style>
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <div class="particles" id="particles"></div>
+  <div class="container">
+    <div class="logo-wrapper">
+      <div class="logo-icon">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="grad1" x1="14" y1="4" x2="34" y2="44"><stop offset="0%" stop-color="#ff8c2a"/><stop offset="100%" stop-color="#e8650a"/></linearGradient></defs>
+          <path d="M24 4 L14 22 L20 22 L16 44 L34 20 L27 20 Z" fill="url(#grad1)"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="fibra">FIBRA</span>
+        <span class="sports">SPORTS</span>
+      </div>
+    </div>
+    <div class="slogan">
+      <p>Por tras de cada largada,</p>
+      <span class="destaque">Existe uma historia.</span>
+    </div>
+    <div class="divider"></div>
+    <div class="card">
+      <p>O proximo capitulo da Fibra Sports esta sendo construido.</p>
+      <p>Estamos preparando uma nova experiencia para atletas, corredores e apaixonados por movimento.</p>
+      <p>Uma plataforma criada para conectar pessoas, performance, conhecimento, comunidade e proposito.</p>
+      <p>Em breve voce tera acesso a novidades exclusivas, conteudos especiais, experiencias diferenciadas e um ecossistema completo pensado para quem vive o esporte de verdade.</p>
+      <p>Enquanto isso, voce ja pode fazer parte da nossa comunidade.</p>
+      <p class="highlight">Faca parte da Familia Fibra Sports.</p>
+    </div>
+    <div class="buttons-section">
+      <a href="https://wa.me/message/HB2DREFJ7X7YG1" target="_blank" rel="noopener" class="btn btn-primary">
+        <span class="icon"><svg width="22" height="22" viewBox="0 0 48 48" fill="none"><path d="M24 4 L14 22 L20 22 L16 44 L34 20 L27 20 Z" fill="#e8650a"/></svg></span>
+        ENTRE PARA A FAMILIA
+      </a>
+      <a href="https://instagram.com/fibrasports" target="_blank" rel="noopener" class="btn">
+        <span class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e8650a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><circle cx="12" cy="12" r="4.5"/><circle cx="17.5" cy="6.5" r="1" fill="#e8650a" stroke="none"/></svg></span>
+        @FIBRASPORTS
+      </a>
+      <a href="https://www.tiktok.com/@timefibrasports" target="_blank" rel="noopener" class="btn">
+        <span class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="#e8650a"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.74a4.85 4.85 0 0 1-1.01-.05z"/></svg></span>
+        TIKTOK - @TIMEFIBRASPORTS
+      </a>
+    </div>
+    <div class="footer-section">
+      <div class="nova-plataforma">Nova Plataforma</div>
+      <div class="brand-footer">
+        <div class="name">FIBRA SPORTS</div>
+        <div class="tagline">E FORTE BRASIL.</div>
+        <div class="sub">Movimento - Comunidade - Performance - Pertencimento - Legado</div>
+      </div>
+    </div>
+  </div>
+  <a href="https://wa.me/message/HB2DREFJ7X7YG1" target="_blank" rel="noopener" class="whatsapp-float" title="Fale conosco no WhatsApp">
+    <svg viewBox="0 0 32 32" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M16 2C8.27 2 2 8.27 2 16c0 2.44.65 4.73 1.78 6.72L2 30l7.54-1.97A13.93 13.93 0 0 0 16 30c7.73 0 14-6.27 14-14S23.73 2 16 2zm7.26 19.6c-.3.84-1.77 1.6-2.43 1.66-.6.06-1.17.28-3.97-.83-3.34-1.33-5.49-4.74-5.65-4.96-.16-.22-1.3-1.73-1.3-3.3 0-1.57.82-2.34 1.11-2.66.3-.32.65-.4.87-.4l.62.01c.2 0 .46-.07.72.55.27.65.92 2.23.99 2.39.08.16.13.34.03.55-.1.2-.15.32-.3.5-.16.17-.33.39-.47.52-.16.15-.32.31-.14.6.18.3.8 1.32 1.72 2.13 1.18 1.05 2.17 1.38 2.48 1.53.3.16.48.13.66-.08.18-.22.77-.9.97-1.2.2-.3.4-.25.68-.15.27.1 1.73.82 2.03.96.3.15.5.22.57.34.08.12.08.7-.22 1.54z"/></svg>
+  </a>
+  <script>
+    const c = document.getElementById('particles');
+    for (let i = 0; i < 25; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (6 + Math.random() * 10) + 's';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      p.style.width = (1 + Math.random() * 3) + 'px';
+      p.style.height = p.style.width;
+      c.appendChild(p);
+    }
+  </script>
+</body>
+</html>
