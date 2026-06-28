@@ -1,313 +1,457 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Logo 3D Pro - Renderizador</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { 
-  background: #000000; 
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-}
-canvas { display: block; }
-#ui {
-  position: fixed;
-  bottom: 30px;
-  left: 30px;
-  background: rgba(0,0,0,0.8);
-  color: #FFF;
-  padding: 20px;
-  border-radius: 10px;
-  font-size: 12px;
-  border: 2px solid #FF7A00;
-  z-index: 100;
-}
-#screenshot {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  background: #FF7A00;
-  color: #000;
-  padding: 15px 30px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  z-index: 100;
-  transition: all 0.3s;
-}
-#screenshot:hover { background: #FF9D00; transform: scale(1.05); }
-#info {
-  font-size: 11px;
-  margin-top: 10px;
-  color: #FFA500;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fibra Sports</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,900;1,700;1,900&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --laranja: #e8650a;
+      --laranja-claro: #ff8c2a;
+      --preto: #080808;
+      --branco: #ffffff;
+    }
+
+    body {
+      background-color: var(--preto);
+      color: var(--branco);
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .particles {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .particle {
+      position: absolute;
+      width: 2px; height: 2px;
+      background: var(--laranja);
+      border-radius: 50%;
+      animation: float-up linear infinite;
+      opacity: 0;
+    }
+    @keyframes float-up {
+      0%   { transform: translateY(100vh); opacity: 0; }
+      10%  { opacity: 0.5; }
+      90%  { opacity: 0.2; }
+      100% { transform: translateY(-10vh) translateX(20px); opacity: 0; }
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 680px;
+      padding: 48px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* ── LOGO ── */
+    .logo-wrapper {
+      margin-bottom: 24px;
+      animation: fadeDown 0.8s ease both;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .logo-icon-3d {
+      width: 84px;
+      height: 84px;
+      position: relative;
+      background:
+        linear-gradient(160deg, rgba(36,36,36,0.9) 0%, rgba(4,4,4,1) 55%);
+      border: 2.5px solid #FF8A00;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow:
+        0 0 0 1.5px #FF4A00,
+        0 0 10px #FF8A00,
+        0 0 24px rgba(255,138,0,0.65),
+        0 0 55px rgba(255,74,0,0.3),
+        inset 0 1px 0 rgba(255,220,140,0.14),
+        inset 0 -1px 0 rgba(0,0,0,0.9);
+      animation: neon-pulse 2.5s ease-in-out infinite;
+      overflow: hidden;
+    }
+    /* glass gloss reflection top */
+    .logo-icon-3d::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 42%;
+      background: linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 100%);
+      border-radius: 18px 18px 0 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+    @keyframes neon-pulse {
+      0%, 100% { box-shadow: 0 0 0 1.5px #FF4A00, 0 0 10px #FF8A00, 0 0 24px rgba(255,138,0,0.65), 0 0 55px rgba(255,74,0,0.3), inset 0 1px 0 rgba(255,220,140,0.14), inset 0 -1px 0 rgba(0,0,0,0.9); }
+      50%       { box-shadow: 0 0 0 1.5px #FF6A00, 0 0 18px #FF8A00, 0 0 42px rgba(255,138,0,0.85), 0 0 90px rgba(255,74,0,0.45), inset 0 1px 0 rgba(255,220,140,0.2), inset 0 -1px 0 rgba(0,0,0,0.9); }
+    }
+    .logo-icon-3d svg { width: 54px; height: 54px; position: relative; z-index: 1; }
+
+    .logo-text { display: flex; flex-direction: column; align-items: flex-start; line-height: 1; }
+    .logo-text .fibra {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 3.8rem;
+      font-weight: 900;
+      color: var(--branco);
+      letter-spacing: 3px;
+      line-height: 0.9;
+    }
+    .logo-text .sports {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--branco);
+      letter-spacing: 6px;
+      opacity: 0.9;
+    }
+
+    /* ── SLOGAN ── */
+    .slogan {
+      margin: 32px 0 8px;
+      animation: fadeDown 0.9s ease 0.15s both;
+    }
+    .slogan .linha1 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--branco);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      display: block;
+    }
+    .slogan .destaque {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      font-style: italic;
+      color: var(--laranja);
+      text-transform: uppercase;
+      display: block;
+      margin-top: 2px;
+      animation: glow-text 2.5s ease-in-out infinite;
+    }
+    @keyframes glow-text {
+      0%, 100% { text-shadow: 0 0 20px rgba(232,101,10,0.5); }
+      50%       { text-shadow: 0 0 44px rgba(232,101,10,0.95), 0 0 70px rgba(232,101,10,0.4); }
+    }
+
+    /* ── CARD COM ANEL ── */
+    .card-wrapper {
+      position: relative;
+      width: 100%;
+      margin: 32px 0 0;
+      animation: fadeUp 1s ease 0.3s both;
+    }
+    .ring-glow {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 440px; height: 440px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center,
+        transparent 30%,
+        rgba(232,101,10,0.15) 52%,
+        rgba(232,101,10,0.3) 64%,
+        rgba(232,101,10,0.06) 74%,
+        transparent 84%
+      );
+      animation: ring-pulse 3s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+    @keyframes ring-pulse {
+      0%, 100% { opacity: 0.7; transform: translate(-50%,-50%) scale(1); }
+      50%       { opacity: 1;   transform: translate(-50%,-50%) scale(1.06); }
+    }
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(8,8,8,0.88);
+      border: 1px solid rgba(232,101,10,0.22);
+      border-radius: 18px;
+      padding: 32px 28px;
+      backdrop-filter: blur(14px);
+    }
+    .card p {
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 10px;
+    }
+    .card p:last-child { margin-bottom: 0; }
+    .card .cta-link {
+      color: var(--laranja);
+      font-weight: 700;
+      text-decoration: none;
+    }
+    .card .cta-link:hover { text-decoration: underline; }
+
+    /* ── BOTÕES HORIZONTAIS ── */
+    .buttons-section {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 1s ease 0.5s both;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 18px;
+      border-radius: 8px;
+      border: 1.5px solid var(--laranja);
+      background: rgba(0,0,0,0.65);
+      color: var(--branco);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+    .btn:hover {
+      background: rgba(232,101,10,0.15);
+      box-shadow: 0 0 20px rgba(232,101,10,0.35);
+      transform: translateY(-2px);
+    }
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary { background: rgba(232,101,10,0.1); }
+    .btn-primary .btn-logo { width: 20px; height: 20px; flex-shrink: 0; }
+
+    /* ── TEXTO ROTATIVO ── */
+    .rotating-section {
+      margin-top: 48px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 1s ease 0.7s both;
+    }
+    #rotatingText {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 6px;
+      color: var(--laranja);
+      text-transform: uppercase;
+      transition: opacity 0.4s ease;
+    }
+
+    /* ── FOOTER ── */
+    .footer-section {
+      margin-top: 40px;
+      animation: fadeUp 1s ease 0.9s both;
+      text-align: center;
+    }
+    .brand-footer .name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: 5px;
+      color: var(--laranja);
+    }
+    .brand-footer .tagline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--branco);
+      letter-spacing: 3px;
+      margin-top: 4px;
+    }
+    .brand-footer .sub {
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.32);
+      margin-top: 10px;
+      letter-spacing: 1px;
+    }
+
+    /* ── WHATSAPP ── */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      z-index: 999;
+      width: 56px; height: 56px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      box-shadow: 0 4px 18px rgba(37,211,102,0.5);
+      animation: bounce-wp 2.5s ease-in-out infinite;
+    }
+    .whatsapp-float:hover {
+      transform: scale(1.12);
+      box-shadow: 0 6px 28px rgba(37,211,102,0.7);
+      animation: none;
+    }
+    @keyframes bounce-wp {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-7px); }
+    }
+
+    @keyframes fadeDown { from { opacity:0; transform:translateY(-18px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(18px);  } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+
+    @media (max-width: 480px) {
+      .logo-text .fibra { font-size: 2.8rem; }
+      .logo-icon-3d { width: 64px; height: 64px; }
+      .logo-icon-3d svg { width: 40px; height: 40px; }
+      .slogan .destaque { font-size: 1.7rem; }
+      .card { padding: 22px 18px; }
+      .btn { padding: 10px 13px; font-size: 0.78rem; }
+      .ring-glow { width: 320px; height: 320px; }
+    }
+  </style>
 </head>
 <body>
-<div id="ui">
-  🔄 Renderizando Logotipo 3D Premium<br>
-  <div id="info">Qualidade Ultra • Ray Tracing Simulado</div>
-</div>
-<button id="screenshot">📸 EXPORTAR PNG</button>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
+  <div class="particles" id="particles"></div>
 
-// ===== CONFIGURAÇÕES =====
-const CANVAS_WIDTH = window.innerWidth;
-const CANVAS_HEIGHT = window.innerHeight;
+  <div class="container">
 
-// ===== CENA =====
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
-scene.fog = new THREE.Fog(0x000000, 100, 500);
+    <!-- LOGO -->
+    <div class="logo-wrapper">
+      <div class="logo-icon-3d">
+        <img src="logo-icon.png" alt="Fibra Sports Logo" style="width:72px;height:72px;object-fit:contain;position:relative;z-index:1;" />
+      </div>
+      <div class="logo-text">
+        <span class="fibra">FIBRA</span>
+        <span class="sports">SPORTS</span>
+      </div>
+    </div>
 
-// ===== CÂMERA =====
-const camera = new THREE.PerspectiveCamera(
-  75,
-  CANVAS_WIDTH / CANVAS_HEIGHT,
-  0.1,
-  1000
-);
-camera.position.set(0, 0.3, 3.2);
+    <!-- SLOGAN -->
+    <div class="slogan">
+      <span class="linha1">Por trás de cada largada,</span>
+      <span class="destaque">Existe uma história.</span>
+    </div>
 
-// ===== RENDERER =====
-const canvas = document.createElement('canvas');
-const renderer = new THREE.WebGLRenderer({ 
-  canvas, 
-  antialias: true, 
-  alpha: true,
-  precision: 'highp',
-  powerPreference: 'high-performance'
-});
-renderer.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFShadowShadowShadowMap;
-renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.toneMappingExposure = 1.2;
-document.body.appendChild(canvas);
+    <!-- CARD COM ANEL -->
+    <div class="card-wrapper">
+      <div class="ring-glow"></div>
+      <div class="card">
+        <p>O próximo capítulo da Fibra Sports está sendo construído.</p>
+        <p>Estamos preparando uma nova experiência para atletas, corredores e apaixonados por movimento.</p>
+        <p>Uma plataforma criada para conectar pessoas, performance, conhecimento, comunidade e propósito.</p>
+        <p>Em breve você terá acesso a novidades exclusivas, conteúdos especiais, experiências diferenciadas e um ecossistema completo pensado para quem vive o esporte de verdade.</p>
+        <p>Enquanto isso, você já pode fazer parte da nossa comunidade.</p>
+        <p>Acompanhe diariamente conteúdos exclusivos, dicas de treinamento, bastidores, eventos, desafios, novidades e histórias inspiradoras através dos nossos canais oficiais.</p>
+        <p><a href="https://wa.me/message/HB2DREFJ7X7YG1" target="_blank" rel="noopener" class="cta-link">Faça parte da Família Fibra Sports.</a></p>
+      </div>
+    </div>
 
-// ===== MATERIAIS =====
+    <!-- BOTÕES -->
+    <div class="buttons-section">
 
-// Material Preto Brilhante (Piano Black Glass)
-const blackMaterial = new THREE.MeshPhysicalMaterial({
-  color: 0x0a0a0a,
-  metalness: 0,
-  roughness: 0.05,
-  clearcoat: 1.0,
-  clearcoatRoughness: 0.02,
-  ior: 1.5,
-  envMapIntensity: 2.0,
-  side: THREE.FrontSide
-});
+      <a href="https://wa.me/message/HB2DREFJ7X7YG1" target="_blank" rel="noopener" class="btn btn-primary">
+        <img src="logo-icon.png" alt="" style="width:20px;height:20px;object-fit:contain;" />
+        ENTRE PARA A FAMÍLIA
+      </a>
 
-// Material Laranja Metálico
-const orangeMaterial = new THREE.MeshPhysicalMaterial({
-  color: 0xFF7A00,
-  metalness: 0.85,
-  roughness: 0.12,
-  ior: 2.4,
-  specularIntensity: 0.7,
-  envMapIntensity: 1.8
-});
+      <a href="https://instagram.com/fibrasports" target="_blank" rel="noopener" class="btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e8650a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4.5"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="#e8650a" stroke="none"/>
+        </svg>
+        @fibrasports
+      </a>
 
-// Material Neon Laranja (Emissivo)
-const neonMaterial = new THREE.MeshBasicMaterial({
-  color: 0xFF6A00,
-  emissive: 0xFF6A00,
-  emissiveIntensity: 1.5
-});
+      <a href="https://www.tiktok.com/@timefibrasports" target="_blank" rel="noopener" class="btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#e8650a">
+          <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.74a4.85 4.85 0 0 1-1.01-.05z"/>
+        </svg>
+        TikTok
+      </a>
 
-// ===== GEOMETRIAS E MESHES =====
+    </div>
 
-// 1. CONTAINER PRETO PRINCIPAL
-const containerGeometry = new THREE.BoxGeometry(2.2, 2.2, 0.35);
-const container = new THREE.Mesh(containerGeometry, blackMaterial);
-container.castShadow = true;
-container.receiveShadow = true;
-scene.add(container);
+    <!-- TEXTO ROTATIVO -->
+    <div class="rotating-section">
+      <span id="rotatingText">EM BREVE</span>
+    </div>
 
-// Aplicar bevel às arestas (através de LineSegments)
-const edgesGeometry = new THREE.EdgesGeometry(containerGeometry, 20);
-const wireframe = new THREE.LineSegments(
-  edgesGeometry,
-  new THREE.LineBasicMaterial({ color: 0xFF8A00, linewidth: 2, fog: false })
-);
-container.add(wireframe);
+    <!-- FOOTER -->
+    <div class="footer-section">
+      <div class="brand-footer">
+        <div class="name">FIBRA SPORTS</div>
+        <div class="tagline">É FORTE BRASIL.</div>
+        <div class="sub">Movimento · Comunidade · Performance · Pertencimento · Legado</div>
+      </div>
+    </div>
 
-// 2. BORDA NEON LUMINOSA
-const neonBorderGeometry = new THREE.BoxGeometry(2.25, 2.25, 0.37);
-const neonBorder = new THREE.Mesh(neonBorderGeometry, neonMaterial);
-neonBorder.position.z = -0.01;
-neonBorder.castShadow = false;
-neonBorder.receiveShadow = false;
-scene.add(neonBorder);
+  </div>
 
-// 3. SÍMBOLO LARANJA 3D (GRUPO PRINCIPAL)
-const symbolGroup = new THREE.Group();
-symbolGroup.position.z = 0.25;
+  <!-- WHATSAPP FLUTUANTE -->
+  <a href="https://wa.me/message/HB2DREFJ7X7YG1" target="_blank" rel="noopener" class="whatsapp-float" title="Fale conosco no WhatsApp">
+    <svg viewBox="0 0 32 32" fill="white" width="30" height="30" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 2C8.27 2 2 8.27 2 16c0 2.44.65 4.73 1.78 6.72L2 30l7.54-1.97A13.93 13.93 0 0 0 16 30c7.73 0 14-6.27 14-14S23.73 2 16 2zm7.26 19.6c-.3.84-1.77 1.6-2.43 1.66-.6.06-1.17.28-3.97-.83-3.34-1.33-5.49-4.74-5.65-4.96-.16-.22-1.3-1.73-1.3-3.3 0-1.57.82-2.34 1.11-2.66.3-.32.65-.4.87-.4l.62.01c.2 0 .46-.07.72.55.27.65.92 2.23.99 2.39.08.16.13.34.03.55-.1.2-.15.32-.3.5-.16.17-.33.39-.47.52-.16.15-.32.31-.14.6.18.3.8 1.32 1.72 2.13 1.18 1.05 2.17 1.38 2.48 1.53.3.16.48.13.66-.08.18-.22.77-.9.97-1.2.2-.3.4-.25.68-.15.27.1 1.73.82 2.03.96.3.15.5.22.57.34.08.12.08.7-.22 1.54z"/>
+    </svg>
+  </a>
 
-// --- Banda Central (Cone estilizado) ---
-const centralCone = new THREE.ConeGeometry(0.18, 1.6, 32);
-const centralSymbol = new THREE.Mesh(centralCone, orangeMaterial);
-centralSymbol.position.y = -0.1;
-centralSymbol.castShadow = true;
-centralSymbol.receiveShadow = true;
-symbolGroup.add(centralSymbol);
+  <script>
+    // Partículas
+    const pc = document.getElementById('particles');
+    for (let i = 0; i < 20; i++) {
+      const p = document.createElement('div');
+      p.classList.add('particle');
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (7 + Math.random() * 10) + 's';
+      p.style.animationDelay = (Math.random() * 8) + 's';
+      const s = (1 + Math.random() * 2.5) + 'px';
+      p.style.width = s; p.style.height = s;
+      pc.appendChild(p);
+    }
 
-// --- Esfera Esquerda Superior ---
-const sphereLeft = new THREE.SphereGeometry(0.28, 32, 32);
-const sphereLeftMesh = new THREE.Mesh(sphereLeft, orangeMaterial);
-sphereLeftMesh.position.set(-0.55, 0.45, 0);
-sphereLeftMesh.castShadow = true;
-sphereLeftMesh.receiveShadow = true;
-symbolGroup.add(sphereLeftMesh);
+    // Texto rotativo
+    const phrases = ['EM BREVE', 'NOVA PLATAFORMA', 'NOVAS EXPERIÊNCIAS', 'NOVAS CONEXÕES', 'NOVAS POSSIBILIDADES', 'FIBRA SPORTS'];
+    let idx = 0;
+    const el = document.getElementById('rotatingText');
+    el.textContent = phrases[0];
 
-// --- Esfera Direita Superior ---
-const sphereRight = new THREE.SphereGeometry(0.28, 32, 32);
-const sphereRightMesh = new THREE.Mesh(sphereRight, orangeMaterial);
-sphereRightMesh.position.set(0.55, 0.45, 0);
-sphereRightMesh.castShadow = true;
-sphereRightMesh.receiveShadow = true;
-symbolGroup.add(sphereRightMesh);
+    setInterval(() => {
+      el.style.opacity = '0';
+      setTimeout(() => {
+        idx = (idx + 1) % phrases.length;
+        el.textContent = phrases[idx];
+        el.style.opacity = '1';
+      }, 400);
+    }, 2200);
+  </script>
 
-// --- Pés Inferiores ---
-const footLeft = new THREE.ConeGeometry(0.15, 0.6, 16);
-const footLeftMesh = new THREE.Mesh(footLeft, orangeMaterial);
-footLeftMesh.position.set(-0.45, -0.75, 0);
-footLeftMesh.rotation.z = Math.PI / 6;
-footLeftMesh.castShadow = true;
-footLeftMesh.receiveShadow = true;
-symbolGroup.add(footLeftMesh);
-
-const footRight = new THREE.ConeGeometry(0.15, 0.6, 16);
-const footRightMesh = new THREE.Mesh(footRight, orangeMaterial);
-footRightMesh.position.set(0.45, -0.75, 0);
-footRightMesh.rotation.z = -Math.PI / 6;
-footRightMesh.castShadow = true;
-footRightMesh.receiveShadow = true;
-symbolGroup.add(footRightMesh);
-
-scene.add(symbolGroup);
-
-// ===== ILUMINAÇÃO PROFISSIONAL =====
-
-// Key Light (Superior Esquerda) - 1000W
-const keyLight = new THREE.DirectionalLight(0xFFFFFF, 1.3);
-keyLight.position.set(-3, 4, 3);
-keyLight.castShadow = true;
-keyLight.shadow.mapSize.width = 2048;
-keyLight.shadow.mapSize.height = 2048;
-keyLight.shadow.camera.left = -5;
-keyLight.shadow.camera.right = 5;
-keyLight.shadow.camera.top = 5;
-keyLight.shadow.camera.bottom = -5;
-keyLight.shadow.camera.far = 20;
-scene.add(keyLight);
-
-// Fill Light (Frente) - 300W
-const fillLight = new THREE.DirectionalLight(0xFFFFFF, 0.5);
-fillLight.position.set(0, 1, 4);
-scene.add(fillLight);
-
-// Rim Light (Traseira Direita) - 500W
-const rimLight = new THREE.DirectionalLight(0xFF7A00, 0.4);
-rimLight.position.set(3, 1, -3);
-scene.add(rimLight);
-
-// Ambient Light (ambiente geral)
-const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.35);
-scene.add(ambientLight);
-
-// Light auxiliar para reflexos
-const auxLight = new THREE.PointLight(0xFF7A00, 0.3);
-auxLight.position.set(-2, -2, 2);
-scene.add(auxLight);
-
-// ===== PLANO DE REFERÊNCIA (para sombras) =====
-const planeGeometry = new THREE.PlaneGeometry(20, 20);
-const planeMaterial = new THREE.ShadowMaterial({ opacity: 0.1 });
-const plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.rotation.x = -Math.PI / 2;
-plane.position.y = -2;
-plane.receiveShadow = true;
-scene.add(plane);
-
-// ===== CONTROLES DO MOUSE =====
-let isDragging = false;
-let previousMousePosition = { x: 0, y: 0 };
-let autoRotate = true;
-
-document.addEventListener('mousedown', (e) => {
-  isDragging = true;
-  autoRotate = false;
-  previousMousePosition = { x: e.clientX, y: e.clientY };
-});
-
-document.addEventListener('mousemove', (e) => {
-  if (isDragging) {
-    const deltaX = e.clientX - previousMousePosition.x;
-    const deltaY = e.clientY - previousMousePosition.y;
-    
-    symbolGroup.rotation.y += deltaX * 0.008;
-    symbolGroup.rotation.x += deltaY * 0.008;
-    container.rotation.y += deltaX * 0.008;
-    container.rotation.x += deltaY * 0.008;
-    
-    previousMousePosition = { x: e.clientX, y: e.clientY };
-  }
-});
-
-document.addEventListener('mouseup', () => {
-  isDragging = false;
-  autoRotate = true;
-});
-
-// ===== SCREENSHOT/EXPORT =====
-document.getElementById('screenshot').addEventListener('click', () => {
-  renderer.render(scene, camera);
-  
-  const link = document.createElement('a');
-  link.href = canvas.toDataURL('image/png');
-  link.download = 'logo_3d_final.png';
-  link.click();
-  
-  alert('✅ Imagem salva como: logo_3d_final.png');
-});
-
-// ===== ANIMAÇÃO PRINCIPAL =====
-function animate() {
-  requestAnimationFrame(animate);
-  
-  // Rotação automática suave
-  if (autoRotate) {
-    symbolGroup.rotation.y += 0.0015;
-    container.rotation.y += 0.0015;
-  }
-  
-  // Renderização
-  renderer.render(scene, camera);
-}
-
-animate();
-
-// ===== RESIZE HANDLING =====
-window.addEventListener('resize', () => {
-  const newWidth = window.innerWidth;
-  const newHeight = window.innerHeight;
-  
-  camera.aspect = newWidth / newHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(newWidth, newHeight);
-});
-
-// Log de sucesso
-console.log('✅ Renderizador 3D Premium Carregado com Sucesso!');
-console.log('📸 Clique no botão EXPORTAR PNG para salvar a imagem');
-
-</script>
 </body>
 </html>
